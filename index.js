@@ -1,8 +1,13 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
 
-// --- 1. FUNGSI UTAMA (ENGINE REYZ) ---
+/**
+ * REYZ4YOUXGOD ENGINE - STABLE VERSION
+ * Mesin ini dirancang untuk berjalan di semua script bot tanpa error
+ */
+
+// 1. Branding & Fitur Auto-Follow
 const makeWASocket = (config) => {
-    // Logo ASCII Lu
+    // Logo ASCII (Tampilan di Aspal)
     console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
@@ -15,15 +20,15 @@ const makeWASocket = (config) => {
      \x1b[33m--- POWERED BY REYZ4YOUXGOD ENGINE ---\x1b[0m
 `);
 
-    // Panggil mesin socket asli
-    const makeBaileysSocket = BaileysAsli.default || BaileysAsli;
-    const sock = makeBaileysSocket(config);
+    // Panggil mesin socket asli (Default Export Baileys)
+    const engineAsli = BaileysAsli.default || BaileysAsli;
+    const sock = engineAsli(config);
 
-    // Fitur Auto Join Channel Lu
+    // Fitur Tambahan (Auto Follow Newsletter)
     sock.ev.on('connection.update', async (update) => {
         const { connection } = update;
         if (connection === 'open') {
-            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Engine Connected!');
+            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Engine active, checking channels...');
             const listChannels = [
                 '120363421096003443@newsletter',
                 '120363405947742419@newsletter'
@@ -40,12 +45,11 @@ const makeWASocket = (config) => {
     return sock;
 };
 
-// --- 2. EXPORT MULTI-FUNGSI (BIAR GAK KOSONG) ---
-// Perintah Object.assign ini gunanya buat MENYALIN semua isi Baileys asli
-// (Store, Auth, jidDecode, dll) ke dalam library lu.
-const finalExport = Object.assign(makeWASocket, BaileysAsli, {
+// 2. EXPORT MULTI-FUNGSI (Agar Mesin Bisa Jalan Tanpa Kendala)
+// Kita gabungkan fungsi buatan kita dengan SEMUA fungsi bawaan Baileys asli
+const ReyzEngine = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
     default: makeWASocket
 });
 
-module.exports = finalExport;
+module.exports = ReyzEngine;
