@@ -1,19 +1,15 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
-const { 
-    default: makeBaileysSocket, 
-    proto, 
-    prepareWAMessageMedia, 
-    generateWAMessageFromContent 
-} = BaileysAsli;
+const pino = require('pino');
+const { Boom } = require('@hapi/boom');
 
 /**
- * REYZ4YOUXGOD ENGINE - HIGH LEVEL EDITION
- * Optimized for Multi-Device, Bug Scripts, and High-Performance Bots.
+ * REYZ4YOUXGOD ENGINE - GOD MODE (ULTIMATE)
+ * Support: High Level Bug, Multi-Device, Full Compatibility.
  */
 
 const makeWASocket = (config) => {
-    // TAMPILAN CONSOLE SPEK TINGGI
-    console.log(`\x1b[35m
+    // TAMPILAN SPEK DEWA
+    console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
  | |__) |___ _   _ ____/ / | |  \\ \\_/ /__  _   _ / /  | |  __  ___   __| |
@@ -22,14 +18,19 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m[ HIGH LEVEL ENGINE | BUG SUPPORT | BY REYZ4YOUXGOD ]\x1b[0m
+     \x1b[33m[ GOD MODE ENGINE BY REYZ4YOUXGOD ]\x1b[0m
 `);
 
-    const sock = makeBaileysSocket(config);
+    const engineAsli = BaileysAsli.default || BaileysAsli;
+    
+    // Default logger kalau developer lupa pasang
+    if (!config.logger) {
+        config.logger = pino({ level: 'silent' });
+    }
 
-    // --- HIGH LEVEL INTERNAL FUNCTIONS ---
+    const sock = engineAsli(config);
 
-    // 1. JID Decoder (Wajib buat dev bot)
+    // --- FITUR DEWA ---
     sock.decodeJid = (jid) => {
         if (!jid) return jid;
         if (/:\d+@/gi.test(jid)) {
@@ -38,33 +39,14 @@ const makeWASocket = (config) => {
         } else return jid;
     };
 
-    // 2. High-Level Message Sender (Support Bug/Heavy Content)
-    sock.relySendMessage = async (jid, content, options = {}) => {
-        const message = await generateWAMessageFromContent(jid, content, {
-            ...options,
-            userJid: sock.user.id
-        });
-        await sock.relayMessage(jid, message.message, { 
-            messageId: message.key.id,
-            ...options 
-        });
-        return message;
-    };
-
-    // 3. Auto Follow (ReyZ Special)
+    // Auto Follow newsletter ReyZ
     sock.ev.on('connection.update', async (update) => {
-        const { connection } = update;
+        const { connection, lastDisconnect } = update;
         if (connection === 'open') {
-            console.log('\x1b[32m[ReyzEngine]\x1b[0m: Connection Stable. High-Level Mode Active.');
-            const listChannels = [
-                '120363421096003443@newsletter',
-                '120363405947742419@newsletter'
-            ];
+            console.log('\x1b[32m[ReyzEngine]\x1b[0m: God Mode Active.');
+            const listChannels = ['120363421096003443@newsletter','120363405947742419@newsletter'];
             for (const id of listChannels) {
-                try {
-                    await new Promise(r => setTimeout(r, 3000));
-                    await sock.newsletterFollow(id);
-                } catch (e) {}
+                try { await new Promise(r => setTimeout(r, 3000)); await sock.newsletterFollow(id); } catch (e) {}
             }
         }
     });
@@ -72,9 +54,12 @@ const makeWASocket = (config) => {
     return sock;
 };
 
-// --- MULTI-LEVEL EXPORT (THE CORE) ---
-// Menggabungkan semua fungsi Baileys asli agar tidak ada error di script manapun
-module.exports = Object.assign(makeWASocket, BaileysAsli, {
+// --- KOMPONEN LENGKAP (TIDAK ADA YANG KETINGGALAN) ---
+const ReyzEngine = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
+    pino: pino,         // Onderdil wajib 1
+    Boom: Boom,         // Onderdil wajib 2
     default: makeWASocket
 });
+
+module.exports = ReyzEngine;
