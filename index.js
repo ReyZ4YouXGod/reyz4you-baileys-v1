@@ -3,12 +3,12 @@ const pino = require('pino');
 const { Boom } = require('@hapi/boom');
 
 /**
- * REYZ4YOUXGOD ENGINE - GOD MODE (ULTIMATE)
- * Support: High Level Bug, Multi-Device, Full Compatibility.
+ * REYZ4YOUXGOD ENGINE - THE COMPLETE EDITION
+ * Menjamin semua fungsi Baileys asli bisa dipanggil.
  */
 
 const makeWASocket = (config) => {
-    // TAMPILAN SPEK DEWA
+    // LOGO SANG DEWA
     console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
@@ -18,19 +18,13 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m[ GOD MODE ENGINE BY REYZ4YOUXGOD ]\x1b[0m
+     \x1b[33m--- REYZ4YOUXGOD ENGINE v1.0.10+ [COMPLETED] ---\x1b[0m
 `);
 
     const engineAsli = BaileysAsli.default || BaileysAsli;
-    
-    // Default logger kalau developer lupa pasang
-    if (!config.logger) {
-        config.logger = pino({ level: 'silent' });
-    }
-
     const sock = engineAsli(config);
 
-    // --- FITUR DEWA ---
+    // Helper JID Decode
     sock.decodeJid = (jid) => {
         if (!jid) return jid;
         if (/:\d+@/gi.test(jid)) {
@@ -39,27 +33,17 @@ const makeWASocket = (config) => {
         } else return jid;
     };
 
-    // Auto Follow newsletter ReyZ
-    sock.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update;
-        if (connection === 'open') {
-            console.log('\x1b[32m[ReyzEngine]\x1b[0m: God Mode Active.');
-            const listChannels = ['120363421096003443@newsletter','120363405947742419@newsletter'];
-            for (const id of listChannels) {
-                try { await new Promise(r => setTimeout(r, 3000)); await sock.newsletterFollow(id); } catch (e) {}
-            }
-        }
-    });
-
     return sock;
 };
 
-// --- KOMPONEN LENGKAP (TIDAK ADA YANG KETINGGALAN) ---
-const ReyzEngine = Object.assign(makeWASocket, BaileysAsli, {
+// --- INI YANG KELUPAAN TADI: EKSPOR SEMUA FUNGSI ---
+// Kita gabungkan fungsi utama kita dengan SEMUA properti dari Baileys asli
+const FinalEngine = {
+    ...BaileysAsli,          // Ini buat narik makeInMemoryStore, useMultiFileAuthState, dll.
     makeWASocket: makeWASocket,
-    pino: pino,         // Onderdil wajib 1
-    Boom: Boom,         // Onderdil wajib 2
-    default: makeWASocket
-});
+    pino: pino,
+    Boom: Boom,
+    default: makeWASocket    // Ini buat script yang pake require().default
+};
 
-module.exports = ReyzEngine;
+module.exports = FinalEngine;
