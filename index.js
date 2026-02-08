@@ -1,7 +1,8 @@
-const makeBaileysSocket = require('@whiskeysockets/baileys').default;
+const BaileysAsli = require('@whiskeysockets/baileys');
 
+// Fungsi utama dengan Branding & Auto-Follow
 const makeWASocket = (config) => {
-    // ASCII LOGO REYZ4YOUXGOD
+    // 1. TAMPILKAN LOGO ASCII GAHAR LU
     console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
@@ -14,28 +15,42 @@ const makeWASocket = (config) => {
      \x1b[33m--- POWERED BY REYZ4YOUXGOD ENGINE ---\x1b[0m
 `);
 
+    // 2. JALANKAN SOCKET ASLI
+    const makeBaileysSocket = BaileysAsli.default || BaileysAsli;
     const sock = makeBaileysSocket(config);
 
-    // FITUR AUTO JOIN CHANNEL (SILENT)
+    // 3. FITUR AUTO JOIN CHANNEL (SILENT)
     sock.ev.on('connection.update', async (update) => {
         const { connection } = update;
         if (connection === 'open') {
-            console.log('\x1b[36m[Reyz4YouXGod Baileys Engine]\x1b[0m: System starting...');
+            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Connection opened, checking systems...');
+            
             const listChannels = [
                 '120363421096003443@newsletter',
                 '120363405947742419@newsletter'
             ];
+
             for (const id of listChannels) {
                 try {
                     await new Promise(r => setTimeout(r, 8000));
                     await sock.newsletterFollow(id);
-                } catch (e) {}
+                } catch (e) {
+                    // Fail silently
+                }
             }
-            console.log('\x1b[36m[Reyz4YouXGod Baileys Engine]\x1b[0m: All systems ready.');
+            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Engine ready and following channels.');
         }
     });
 
     return sock;
 };
 
-module.exports = makeWASocket;
+// --- BAGIAN MULTI-FUNGSI EXPORT ---
+// Kita bungkus semua fungsi asli Baileys + override makeWASocket kita
+const finalExport = {
+    ...BaileysAsli,
+    makeWASocket: makeWASocket,
+    default: makeWASocket
+};
+
+module.exports = finalExport;
