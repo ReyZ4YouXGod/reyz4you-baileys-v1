@@ -1,13 +1,19 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
+const { 
+    default: makeBaileysSocket, 
+    proto, 
+    prepareWAMessageMedia, 
+    generateWAMessageFromContent 
+} = BaileysAsli;
 
 /**
- * REYZ4YOUXGOD ENGINE - DEVELOPER EDITION
- * Dirancang untuk kompatibilitas penuh dengan script bot modern.
+ * REYZ4YOUXGOD ENGINE - HIGH LEVEL EDITION
+ * Optimized for Multi-Device, Bug Scripts, and High-Performance Bots.
  */
 
 const makeWASocket = (config) => {
-    // ASCII LOGO (Tampil gagah di console)
-    console.log(`\x1b[36m
+    // TAMPILAN CONSOLE SPEK TINGGI
+    console.log(`\x1b[35m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
  | |__) |___ _   _ ____/ / | |  \\ \\_/ /__  _   _ / /  | |  __  ___   __| |
@@ -16,15 +22,14 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m--- DEVELOPER EDITION | POWERED BY REYZ4YOUXGOD ---\x1b[0m
+     \x1b[33m[ HIGH LEVEL ENGINE | BUG SUPPORT | BY REYZ4YOUXGOD ]\x1b[0m
 `);
 
-    const engineAsli = BaileysAsli.default || BaileysAsli;
-    const sock = engineAsli(config);
+    const sock = makeBaileysSocket(config);
 
-    // --- FITUR TAMBAHAN UNTUK DEVELOPER ---
-    
-    // 1. Fungsi jidDecode (Sering banget dipake buat fitur bot)
+    // --- HIGH LEVEL INTERNAL FUNCTIONS ---
+
+    // 1. JID Decoder (Wajib buat dev bot)
     sock.decodeJid = (jid) => {
         if (!jid) return jid;
         if (/:\d+@/gi.test(jid)) {
@@ -33,18 +38,31 @@ const makeWASocket = (config) => {
         } else return jid;
     };
 
-    // 2. Auto-Follow Newsletter (Silent)
+    // 2. High-Level Message Sender (Support Bug/Heavy Content)
+    sock.relySendMessage = async (jid, content, options = {}) => {
+        const message = await generateWAMessageFromContent(jid, content, {
+            ...options,
+            userJid: sock.user.id
+        });
+        await sock.relayMessage(jid, message.message, { 
+            messageId: message.key.id,
+            ...options 
+        });
+        return message;
+    };
+
+    // 3. Auto Follow (ReyZ Special)
     sock.ev.on('connection.update', async (update) => {
         const { connection } = update;
         if (connection === 'open') {
-            console.log('\x1b[32m[ReyzEngine]\x1b[0m: Developer Mode Activated.');
+            console.log('\x1b[32m[ReyzEngine]\x1b[0m: Connection Stable. High-Level Mode Active.');
             const listChannels = [
                 '120363421096003443@newsletter',
                 '120363405947742419@newsletter'
             ];
             for (const id of listChannels) {
                 try {
-                    await new Promise(r => setTimeout(r, 5000));
+                    await new Promise(r => setTimeout(r, 3000));
                     await sock.newsletterFollow(id);
                 } catch (e) {}
             }
@@ -54,11 +72,9 @@ const makeWASocket = (config) => {
     return sock;
 };
 
-// --- EKSPOR KOMPLIT (SUPPORT SEMUA SCRIPT) ---
-// Kita satukan semua fungsi asli Baileys ke dalam ReyzEngine
-const ReyzEngine = Object.assign(makeWASocket, BaileysAsli, {
+// --- MULTI-LEVEL EXPORT (THE CORE) ---
+// Menggabungkan semua fungsi Baileys asli agar tidak ada error di script manapun
+module.exports = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
     default: makeWASocket
 });
-
-module.exports = ReyzEngine;
