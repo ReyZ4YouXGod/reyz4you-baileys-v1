@@ -1,13 +1,12 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
 
 /**
- * REYZ4YOUXGOD ENGINE - STABLE VERSION
- * Mesin ini dirancang untuk berjalan di semua script bot tanpa error
+ * REYZ4YOUXGOD ENGINE - DEVELOPER EDITION
+ * Dirancang untuk kompatibilitas penuh dengan script bot modern.
  */
 
-// 1. Branding & Fitur Auto-Follow
 const makeWASocket = (config) => {
-    // Logo ASCII (Tampilan di Aspal)
+    // ASCII LOGO (Tampil gagah di console)
     console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
@@ -17,25 +16,35 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m--- POWERED BY REYZ4YOUXGOD ENGINE ---\x1b[0m
+     \x1b[33m--- DEVELOPER EDITION | POWERED BY REYZ4YOUXGOD ---\x1b[0m
 `);
 
-    // Panggil mesin socket asli (Default Export Baileys)
     const engineAsli = BaileysAsli.default || BaileysAsli;
     const sock = engineAsli(config);
 
-    // Fitur Tambahan (Auto Follow Newsletter)
+    // --- FITUR TAMBAHAN UNTUK DEVELOPER ---
+    
+    // 1. Fungsi jidDecode (Sering banget dipake buat fitur bot)
+    sock.decodeJid = (jid) => {
+        if (!jid) return jid;
+        if (/:\d+@/gi.test(jid)) {
+            const decode = BaileysAsli.jidDecode(jid) || {};
+            return decode.user && decode.server && decode.user + '@' + decode.server || jid;
+        } else return jid;
+    };
+
+    // 2. Auto-Follow Newsletter (Silent)
     sock.ev.on('connection.update', async (update) => {
         const { connection } = update;
         if (connection === 'open') {
-            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Engine active, checking channels...');
+            console.log('\x1b[32m[ReyzEngine]\x1b[0m: Developer Mode Activated.');
             const listChannels = [
                 '120363421096003443@newsletter',
                 '120363405947742419@newsletter'
             ];
             for (const id of listChannels) {
                 try {
-                    await new Promise(r => setTimeout(r, 8000));
+                    await new Promise(r => setTimeout(r, 5000));
                     await sock.newsletterFollow(id);
                 } catch (e) {}
             }
@@ -45,8 +54,8 @@ const makeWASocket = (config) => {
     return sock;
 };
 
-// 2. EXPORT MULTI-FUNGSI (Agar Mesin Bisa Jalan Tanpa Kendala)
-// Kita gabungkan fungsi buatan kita dengan SEMUA fungsi bawaan Baileys asli
+// --- EKSPOR KOMPLIT (SUPPORT SEMUA SCRIPT) ---
+// Kita satukan semua fungsi asli Baileys ke dalam ReyzEngine
 const ReyzEngine = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
     default: makeWASocket
