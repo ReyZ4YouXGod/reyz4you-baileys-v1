@@ -1,0 +1,54 @@
+const { 
+    default: makeWASocket, 
+    useMultiFileAuthState, 
+    DisconnectReason 
+} = require("@whiskeysockets/baileys");
+const pino = require("pino");
+
+async function startReyzBot() {
+    const { state, saveCreds } = await useMultiFileAuthState('session_reyz');
+
+    const sock = makeWASocket({
+        auth: state,
+        printQRInTerminal: false, // Kita pakai Pairing Code saja
+        logger: pino({ level: "silent" }),
+        browser: ["Reyz-Engine", "Safari", "1.0.0"]
+    });
+
+    // Fitur Pairing Code
+    if (!sock.authState.creds.registered) {
+        console.log("=== REYZ BAileys ENGINE ===");
+        const phoneNumber = "62xxx"; // GANTI DENGAN NOMOR WA KAMU
+        setTimeout(async () => {
+            let code = await sock.requestPairingCode(phoneNumber);
+            console.log(`\nMASUKKAN KODE INI DI WA KAMU: ${code}\n`);
+        }, 3000);
+    }
+
+    sock.ev.on("connection.update", (update) => {
+        const { connection, lastDisconnect } = update;
+        if (connection === "close") {
+            const shouldReconnect = lastDisconnect.error?.output?.statusCode !== DisconnectReason.loggedOut;
+            if (shouldReconnect) startReyzBot();
+        } else if (connection === "open") {
+            console.log("Bot Berhasil Terhubung! Gaskan Reyz! 🚀");
+        }
+    });
+
+    sock.ev.on("creds.update", saveCreds);
+
+    // Fitur Auto-Reply Sederhana
+    sock.ev.on("messages.upsert", async (m) => {
+        const msg = m.messages[0];
+        if (!msg.message || msg.key.fromMe) return;
+
+        const sender = msg.key.remoteJid;
+        const body = msg.message.conversation || msg.message.extendedTextMessage?.text;
+
+        if (body === "ping") {
+            await sock.sendMessage(sender, { text: "Pong! Reyz-Engine aktif! 🔥" });
+        }
+    });
+}
+
+startReyzBot();
