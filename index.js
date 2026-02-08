@@ -1,15 +1,17 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const { Boom } = require('@hapi/boom');
+const chalk = require('chalk');
 
 /**
- * REYZ4YOUXGOD ENGINE - THE COMPLETE EDITION
- * Menjamin semua fungsi Baileys asli bisa dipanggil.
+ * REYZ4YOUXGOD ENGINE - THE ULTIMATE MIRROR
+ * Built for high-level developers and bug-shifters.
  */
 
+// 1. Definisikan makeWASocket versi Lu (Branded)
 const makeWASocket = (config) => {
-    // LOGO SANG DEWA
-    console.log(`\x1b[36m
+    // Tampilan Gagah Pas Bot Nyala
+    console.log(chalk.cyan(`
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
  | |__) |___ _   _ ____/ / | |  \\ \\_/ /__  _   _ / /  | |  __  ___   __| |
@@ -18,13 +20,13 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m--- REYZ4YOUXGOD ENGINE v1.0.10+ [COMPLETED] ---\x1b[0m
-`);
+     --- REYZ4YOUXGOD ENGINE v1.0.11+ [ULTIMATE] ---
+`));
 
     const engineAsli = BaileysAsli.default || BaileysAsli;
     const sock = engineAsli(config);
 
-    // Helper JID Decode
+    // -- INTERNAL HELPERS --
     sock.decodeJid = (jid) => {
         if (!jid) return jid;
         if (/:\d+@/gi.test(jid)) {
@@ -33,17 +35,39 @@ const makeWASocket = (config) => {
         } else return jid;
     };
 
+    // Fungsi Relays (Sering dipake pemain bug)
+    sock.relySendMessage = async (jid, content, options = {}) => {
+        const { generateWAMessageFromContent } = BaileysAsli;
+        const message = await generateWAMessageFromContent(jid, content, {
+            ...options,
+            userJid: sock.user.id
+        });
+        await sock.relayMessage(jid, message.message, { 
+            messageId: message.key.id,
+            ...options 
+        });
+        return message;
+    };
+
     return sock;
 };
 
-// --- INI YANG KELUPAAN TADI: EKSPOR SEMUA FUNGSI ---
-// Kita gabungkan fungsi utama kita dengan SEMUA properti dari Baileys asli
-const FinalEngine = {
-    ...BaileysAsli,          // Ini buat narik makeInMemoryStore, useMultiFileAuthState, dll.
+// 2. EXPORT SEMUA TANPA TERKECUALI
+// Kita mapping semua fungsi Baileys ke library lu
+const FinalEngine = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
     pino: pino,
     Boom: Boom,
-    default: makeWASocket    // Ini buat script yang pake require().default
-};
+    chalk: chalk,
+    default: makeWASocket
+});
+
+// Pastikan fungsi krusial tersedia langsung
+FinalEngine.makeInMemoryStore = BaileysAsli.makeInMemoryStore;
+FinalEngine.useMultiFileAuthState = BaileysAsli.useMultiFileAuthState;
+FinalEngine.DisconnectReason = BaileysAsli.DisconnectReason;
+FinalEngine.jidDecode = BaileysAsli.jidDecode;
+FinalEngine.prepareWAMessageMedia = BaileysAsli.prepareWAMessageMedia;
+FinalEngine.generateWAMessageFromContent = BaileysAsli.generateWAMessageFromContent;
 
 module.exports = FinalEngine;
