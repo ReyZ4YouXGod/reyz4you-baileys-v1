@@ -1,18 +1,26 @@
 {
-  "name": "reyz-baileys",
-  "version": "1.0.5",
-  "description": "",
+  "name": "reyz-baileys-engine",
+  "version": "1.0.0",
+  "description": "High-performance WhatsApp Bot Engine by ReyZ4YouXGod",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "reyz4youxgod",
+    "reyz-baileys",
+    "reyz4you-baileys-v1",
+    "whatsapp-bot-engine",
+    "baileys-custom"
+  ],
+  "author": "ReyZ4YouXGod",
+  "license": "MIT",
   "dependencies": {
-    "@whiskeysockets/baileys": "npm:reyz-baileys@^1.0.2",
+    "@whiskeysockets/baileys": "npm:reyz4you-baileys-v1@latest",
     "pino": "^10.3.0",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "chalk": "^4.1.2"
   }
 }
