@@ -1,6 +1,6 @@
 {
   "name": "reyz4you-baileys-v1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "High-performance WhatsApp Bot Engine by ReyZ4YouXGod",
   "main": "index.js",
   "type": "commonjs",
