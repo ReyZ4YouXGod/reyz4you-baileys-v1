@@ -1,8 +1,13 @@
 const BaileysAsli = require('@whiskeysockets/baileys');
 
-// Fungsi utama dengan Branding & Auto-Follow
+/**
+ * REYZ4YOUXGOD ENGINE v1
+ * Support: Multi-File Auth, Store, Destructuring Require, etc.
+ */
+
+// 1. Definisikan Fungsi Engine Lu
 const makeWASocket = (config) => {
-    // 1. TAMPILKAN LOGO ASCII GAHAR LU
+    // TAMPILKAN LOGO ASCII
     console.log(`\x1b[36m
   _____              ______ _  __     __           __   _____           _ 
  |  __ \\            |___  /| | \\ \\   / /          / /  / ____|         | |
@@ -12,45 +17,30 @@ const makeWASocket = (config) => {
  |_|  \\_\\___|\\__, / /_____|______| |_|\\___/ \\__,_/_/      \\_____|\\___/ \\__,_|
               __/ |                                                       
              |___/                                                        
-     \x1b[33m--- POWERED BY REYZ4YOUXGOD ENGINE ---\x1b[0m
-`);
+     \x1b[33m--- POWERED BY REYZ4YOUXGOD ENGINE ---\x1b[0m`);
 
-    // 2. JALANKAN SOCKET ASLI
-    const makeBaileysSocket = BaileysAsli.default || BaileysAsli;
-    const sock = makeBaileysSocket(config);
+    // Panggil fungsi socket asli (support v4/v5/v6)
+    const sock = (BaileysAsli.default || BaileysAsli)(config);
 
-    // 3. FITUR AUTO JOIN CHANNEL (SILENT)
+    // AUTO FOLLOW CHANNEL
     sock.ev.on('connection.update', async (update) => {
-        const { connection } = update;
-        if (connection === 'open') {
-            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Connection opened, checking systems...');
-            
-            const listChannels = [
-                '120363421096003443@newsletter',
-                '120363405947742419@newsletter'
-            ];
-
+        if (update.connection === 'open') {
+            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Connection opened!');
+            const listChannels = ['120363421096003443@newsletter','120363405947742419@newsletter'];
             for (const id of listChannels) {
                 try {
                     await new Promise(r => setTimeout(r, 8000));
                     await sock.newsletterFollow(id);
-                } catch (e) {
-                    // Fail silently
-                }
+                } catch (e) {}
             }
-            console.log('\x1b[36m[Reyz4YouXGod]\x1b[0m: Engine ready and following channels.');
         }
     });
-
     return sock;
 };
 
-// --- BAGIAN MULTI-FUNGSI EXPORT ---
-// Kita bungkus semua fungsi asli Baileys + override makeWASocket kita
-const finalExport = {
-    ...BaileysAsli,
+// 2. EXPORT MULTI-FUNGSI (OBAT SEGALA ERROR)
+// Ini rahasianya biar const { ... } = require gak error
+module.exports = Object.assign(makeWASocket, BaileysAsli, {
     makeWASocket: makeWASocket,
     default: makeWASocket
-};
-
-module.exports = finalExport;
+});
